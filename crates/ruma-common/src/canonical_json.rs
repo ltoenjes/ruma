@@ -5,9 +5,10 @@ use std::{fmt, mem};
 use serde::Serialize;
 use serde_json::Value as JsonValue;
 
+mod object;
 mod value;
 
-pub use self::value::{CanonicalJsonName, CanonicalJsonObject, CanonicalJsonValue};
+pub use self::{object::*, value::*};
 use crate::{room_version_rules::RedactionRules, serde::Raw};
 
 /// The set of possible errors when serializing to canonical JSON.

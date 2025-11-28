@@ -1,25 +1,14 @@
-use std::{collections::BTreeMap, fmt};
+use std::fmt;
 
 use as_variant::as_variant;
 use js_int::{Int, UInt};
 use serde::{de::Deserializer, ser::Serializer, Deserialize, Serialize};
-use serde_json::{to_string as to_json_string, Value as JsonValue};
-use smallstr::SmallString;
+use serde_json::{
+    to_string as to_json_string, value::RawValue as RawJsonValue, Value as JsonValue,
+};
 
-use super::CanonicalJsonError;
-use crate::serde::{JsonCastable, JsonObject};
-
-/// The inner type of `CanonicalJsonValue::Object`.
-pub type CanonicalJsonObject = BTreeMap<CanonicalJsonName, CanonicalJsonValue>;
-
-/// Property name (or key) for an Object. This is a string-like but typographically distinct for
-/// optimization purposes.
-pub type CanonicalJsonName = SmallString<[u8; NAME_INLINE_CAP]>;
-
-/// Opinionated buffer size of the CanonicalJsonName type.
-const NAME_INLINE_CAP: usize = 32;
-
-impl<T> JsonCastable<CanonicalJsonObject> for T where T: JsonCastable<JsonObject> {}
+use super::{CanonicalJsonError, CanonicalJsonObject};
+use crate::serde::JsonCastable;
 
 /// Represents a canonical JSON value as per the Matrix specification.
 #[derive(Clone, Default, Eq, PartialEq)]
@@ -221,6 +210,29 @@ impl From<CanonicalJsonValue> for JsonValue {
     }
 }
 
+impl From<Box<RawJsonValue>> for CanonicalJsonValue {
+    #[inline]
+    fn from(val: Box<RawJsonValue>) -> Self {
+        (&val).into()
+    }
+}
+
+impl<'a> From<&'a Box<RawJsonValue>> for CanonicalJsonValue {
+    #[inline]
+    fn from(val: &'a Box<RawJsonValue>) -> Self {
+        (&**val).into()
+    }
+}
+
+impl<'a> From<&'a RawJsonValue> for CanonicalJsonValue {
+    fn from(val: &'a RawJsonValue) -> Self {
+        serde_json::from_str::<JsonValue>(val.get())
+            .map_err(CanonicalJsonError::SerDe)
+            .and_then(TryInto::try_into)
+            .expect("Conversion from RawJsonValue to CanonicalJsonValue failed.")
+    }
+}
+
 impl<T> JsonCastable<CanonicalJsonValue> for T {}
 
 macro_rules! variant_impls {
@@ -265,7 +277,6 @@ impl From<UInt> for CanonicalJsonValue {
 }
 
 impl Serialize for CanonicalJsonValue {
-    #[inline]
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
@@ -289,7 +300,6 @@ impl Serialize for CanonicalJsonValue {
 }
 
 impl<'de> Deserialize<'de> for CanonicalJsonValue {
-    #[inline]
     fn deserialize<D>(deserializer: D) -> Result<CanonicalJsonValue, D::Error>
     where
         D: Deserializer<'de>,

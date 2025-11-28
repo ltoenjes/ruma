@@ -42,7 +42,10 @@ use std::fmt;
 
 #[cfg(feature = "canonical-json")]
 pub use self::canonical_json::{
-    CanonicalJsonError, CanonicalJsonName, CanonicalJsonObject, CanonicalJsonValue,
+    CanonicalJsonError, CanonicalJsonMember, CanonicalJsonMemberOptional, CanonicalJsonMemberRef,
+    CanonicalJsonMemberRefOptional, CanonicalJsonMembers, CanonicalJsonMembersOptional,
+    CanonicalJsonMembersRef, CanonicalJsonMembersRefOptional, CanonicalJsonName,
+    CanonicalJsonObject, CanonicalJsonValue,
 };
 pub use self::{
     identifiers::*,

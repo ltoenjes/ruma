@@ -147,8 +147,4 @@ pub use js_option::JsOption;
 #[doc(no_inline)]
 pub use language_tags::LanguageTag;
 pub use ruma_common::*;
-#[cfg(feature = "canonical-json")]
-pub use ruma_common::{
-    canonical_json, CanonicalJsonError, CanonicalJsonObject, CanonicalJsonValue,
-};
 pub use web_time as time;
