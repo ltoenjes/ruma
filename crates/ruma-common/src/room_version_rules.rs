@@ -156,6 +156,12 @@ impl RoomVersionRules {
         redaction: RedactionRules::MSC2870,
         ..Self::V11
     };
+
+    /// Rules for room version `org.matrix.msc4361` ([MSC4361]).
+    ///
+    /// [MSC4361]: https://github.com/matrix-org/matrix-spec-proposals/pull/4361
+    #[cfg(feature = "unstable-msc4361")]
+    pub const MSC4361: Self = Self { authorization: AuthorizationRules::MSC4361, ..Self::V12 };
 }
 
 /// The stability of a room version.
@@ -361,6 +367,14 @@ pub struct AuthorizationRules {
     /// Whether to use the event ID of the `m.room.create` event of the room as the room ID,
     /// introduced in room version 12.
     pub room_create_event_id_as_room_id: bool,
+
+    /// Whether to reject `m.room.member` events if the state key domain doesn't match the
+    /// `m.room.create` event sender's domain, if the room is not federated, introduced in
+    /// [MSC4361].
+    ///
+    /// [MSC4361]: https://github.com/matrix-org/matrix-spec-proposals/pull/4361
+    #[cfg(feature = "unstable-msc4361")]
+    pub reject_remote_members_in_nonfederated_rooms: bool,
 }
 
 impl AuthorizationRules {
@@ -380,6 +394,8 @@ impl AuthorizationRules {
         explicitly_privilege_room_creators: false,
         additional_room_creators: false,
         room_create_event_id_as_room_id: false,
+        #[cfg(feature = "unstable-msc4361")]
+        reject_remote_members_in_nonfederated_rooms: false,
     };
 
     /// Authorization rules with tweaks introduced in room version 3 ([spec]).
@@ -425,6 +441,11 @@ impl AuthorizationRules {
         room_create_event_id_as_room_id: true,
         ..Self::V11
     };
+
+    /// Authorization rules with tweaks introduced in MSC4361
+    #[cfg(feature = "unstable-msc4361")]
+    pub const MSC4361: Self =
+        Self { reject_remote_members_in_nonfederated_rooms: true, ..Self::V12 };
 }
 
 /// The tweaks in the [redaction] algorithm for a room version.
