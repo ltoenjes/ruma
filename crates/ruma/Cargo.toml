@@ -242,6 +242,7 @@ unstable-msc4319 = ["ruma-events?/unstable-msc4319"]
 unstable-msc4310 = ["ruma-events?/unstable-msc4310"]
 unstable-msc4334 = ["ruma-events?/unstable-msc4334", "dep:language-tags"]
 unstable-msc4359 = ["ruma-events?/unstable-msc4359"]
+unstable-msc4361 = ["ruma-common/unstable-msc4361"]
 unstable-msc3230 = ["ruma-events?/unstable-msc3230"]
 
 # Private features, only used in test / benchmarking code
