@@ -35,6 +35,12 @@ pub mod v3 {
         /// The ID of the event.
         #[ruma_api(path)]
         pub event_id: OwnedEventId,
+
+        #[cfg(feature = "unstable-msc2815")]
+        #[ruma_api(query)]
+        #[serde(default, rename = "fi.mau.msc2815.include_unredacted_content")]
+        /// Whether respond with the original event, even if it has been redacted.
+        pub include_unredacted_content: bool,
     }
 
     /// Response type for the `get_room_event` endpoint.
@@ -48,7 +54,12 @@ pub mod v3 {
     impl Request {
         /// Creates a new `Request` with the given room ID and event ID.
         pub fn new(room_id: OwnedRoomId, event_id: OwnedEventId) -> Self {
-            Self { room_id, event_id }
+            Self {
+                room_id,
+                event_id,
+                #[cfg(feature = "unstable-msc2815")]
+                include_unredacted_content: false,
+            }
         }
     }
 
