@@ -37,6 +37,12 @@ impl MilliSecondsSinceUnixEpoch {
         UNIX_EPOCH.checked_add(Duration::from_millis(self.0.into()))
     }
 
+    /// Creates a new `Duration` from `self`, if it can be represented.
+    #[inline]
+    pub fn to_duration(self) -> Option<Duration> {
+        self.to_system_time().as_ref().map(SystemTime::elapsed).transpose().ok().flatten()
+    }
+
     /// Get the time since the unix epoch in milliseconds.
     #[inline]
     pub fn get(&self) -> UInt {
@@ -107,6 +113,12 @@ impl SecondsSinceUnixEpoch {
     #[inline]
     pub fn to_system_time(self) -> Option<SystemTime> {
         UNIX_EPOCH.checked_add(Duration::from_secs(self.0.into()))
+    }
+
+    /// Creates a new `Duration` from `self`, if it can be represented.
+    #[inline]
+    pub fn to_duration(self) -> Option<Duration> {
+        self.to_system_time().as_ref().map(SystemTime::elapsed).transpose().ok().flatten()
     }
 
     /// Get time since the unix epoch in seconds.
