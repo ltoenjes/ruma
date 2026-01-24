@@ -50,6 +50,12 @@ pub mod v3 {
         #[ruma_api(query)]
         #[serde(skip_serializing_if = "Option::is_none", rename = "org.matrix.msc3824.action")]
         pub action: Option<SsoRedirectOidcAction>,
+
+        /// Login token which we use to resolve to an existing user_id. This is used as a method
+        /// for existing-account association.
+        #[ruma_api(query)]
+        #[serde(rename = "loginToken")]
+        pub login_token: Option<String>,
     }
 
     /// Response type for the `sso_login_with_provider` endpoint.
@@ -72,6 +78,7 @@ pub mod v3 {
                 redirect_url,
                 #[cfg(feature = "unstable-msc3824")]
                 action: None,
+                login_token: None,
             }
         }
     }
