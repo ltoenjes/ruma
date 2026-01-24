@@ -6,7 +6,7 @@ use time::OffsetDateTime;
 use web_time::{Duration, SystemTime, UNIX_EPOCH};
 
 /// A timestamp represented as the number of milliseconds since the unix epoch.
-#[derive(Clone, Copy, Hash, PartialEq, Eq, PartialOrd, Ord, Deserialize, Serialize)]
+#[derive(Clone, Copy, Default, Hash, PartialEq, Eq, PartialOrd, Ord, Deserialize, Serialize)]
 #[allow(clippy::exhaustive_structs)]
 #[serde(transparent)]
 pub struct MilliSecondsSinceUnixEpoch(pub UInt);
@@ -78,7 +78,7 @@ impl fmt::Debug for MilliSecondsSinceUnixEpoch {
 }
 
 /// A timestamp represented as the number of seconds since the unix epoch.
-#[derive(Clone, Copy, Hash, PartialEq, Eq, PartialOrd, Ord, Deserialize, Serialize)]
+#[derive(Clone, Copy, Default, Hash, PartialEq, Eq, PartialOrd, Ord, Deserialize, Serialize)]
 #[allow(clippy::exhaustive_structs)]
 #[serde(transparent)]
 pub struct SecondsSinceUnixEpoch(pub UInt);
