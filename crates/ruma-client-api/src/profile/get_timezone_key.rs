@@ -15,7 +15,7 @@ pub mod unstable {
         authentication: None,
         history: {
             unstable => "/_matrix/client/unstable/uk.tcpip.msc4133/profile/{user_id}/us.cloke.msc4175.tz",
-             1.12 => "/_matrix/client/v3/profile/{user_id}/m.tz",
+            1.12 => "/_matrix/client/v3/profile/{user_id}/m.tz",
         }
     };
 
@@ -34,9 +34,11 @@ pub mod unstable {
         /// [MSC4175][msc]: `m.tz` field for specifying a timezone the user is in
         ///
         /// [msc]: https://github.com/matrix-org/matrix-spec-proposals/blob/clokep/profile-tz/proposals/4175-profile-field-time-zone.md
-        ///
-        /// TODO: strong type this to be a valid IANA timezone?
-        #[serde(rename = "us.cloke.msc4175.tz", skip_serializing_if = "Option::is_none")]
+        #[serde(
+            rename = "m.tz",
+            alias = "us.cloke.msc4175.tz",
+            skip_serializing_if = "Option::is_none"
+        )]
         pub tz: Option<String>,
     }
 

@@ -20,7 +20,7 @@ pub mod v3 {
         authentication: AccessToken,
         history: {
             unstable("uk.tcpip.msc4133") => "/_matrix/client/unstable/uk.tcpip.msc4133/profile/{user_id}/{field}",
-            // 1.15 => "/_matrix/client/v3/profile/{user_id}/{field}",
+            1.15 => "/_matrix/client/v3/profile/{user_id}/{field}",
         }
     };
 
