@@ -503,13 +503,16 @@ impl StrExt for str {
     }
 
     fn matches_pattern(&self, pattern: &str, match_words: bool) -> bool {
-        let value = &self.to_lowercase();
-        let pattern = &pattern.to_lowercase();
-
         if match_words {
+            if self.eq_ignore_ascii_case(pattern) {
+                return true;
+            }
+
+            let value = &self.to_lowercase();
+            let pattern = &pattern.to_lowercase();
             value.matches_word(pattern)
         } else {
-            WildMatch::new(pattern).matches(value)
+            WildMatch::new_case_insensitive(pattern).matches(self)
         }
     }
 

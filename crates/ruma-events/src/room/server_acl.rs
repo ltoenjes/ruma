@@ -106,7 +106,7 @@ impl RoomServerAclEventContent {
     }
 
     fn contains(a: &[String], s: &str) -> bool {
-        a.iter().map(String::as_str).any(|a| a.to_lowercase().to_str() == s.to_lowercase().to_str())
+        a.iter().map(String::as_str).any(|a| a.eq_ignore_ascii_case(s))
     }
 }
 
