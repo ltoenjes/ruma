@@ -10,6 +10,7 @@ use ruma_common::{
     api::{request, response, Metadata, SupportedVersions},
     metadata,
 };
+use smallstr::SmallString;
 
 const METADATA: Metadata = metadata! {
     method: GET,
@@ -29,15 +30,21 @@ pub struct Request {}
 #[response(error = crate::Error)]
 pub struct Response {
     /// A list of Matrix client API protocol versions supported by the homeserver.
-    pub versions: Vec<String>,
+    pub versions: Vec<Version>,
 
     /// Experimental features supported by the server.
     ///
     /// Servers can enable some unstable features only for some users, so this
     /// list might differ when an access token is provided.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
-    pub unstable_features: BTreeMap<String, bool>,
+    pub unstable_features: BTreeMap<Feature, bool>,
 }
+
+/// Opinionated optimized Version String type.
+pub type Version = SmallString<[u8; 16]>;
+
+/// Opinionated optimized Feature String type.
+pub type Feature = SmallString<[u8; 48]>;
 
 impl Request {
     /// Creates an empty `Request`.
@@ -48,7 +55,7 @@ impl Request {
 
 impl Response {
     /// Creates a new `Response` with the given `versions`.
-    pub fn new(versions: Vec<String>) -> Self {
+    pub fn new(versions: Vec<Version>) -> Self {
         Self { versions, unstable_features: BTreeMap::new() }
     }
 
@@ -58,6 +65,9 @@ impl Response {
     /// Matrix versions that can't be parsed to a `MatrixVersion`, and features with the boolean
     /// value set to `false` are discarded.
     pub fn as_supported_versions(&self) -> SupportedVersions {
-        SupportedVersions::from_parts(&self.versions, &self.unstable_features)
+        SupportedVersions::from_parts(
+            self.versions.iter().map(Version::as_str),
+            self.unstable_features.iter().map(|(k, v)| (k.as_str(), v)),
+        )
     }
 }

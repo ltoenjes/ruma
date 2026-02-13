@@ -1,6 +1,6 @@
 use std::{
     cmp::Ordering,
-    collections::{BTreeMap, BTreeSet},
+    collections::BTreeSet,
     fmt::{Display, Write},
     str::FromStr,
 };
@@ -1144,13 +1144,19 @@ impl SupportedVersions {
     ///
     /// Matrix versions that can't be parsed to a `MatrixVersion`, and features with the boolean
     /// value set to `false` are discarded.
-    pub fn from_parts(versions: &[String], unstable_features: &BTreeMap<String, bool>) -> Self {
+    pub fn from_parts<'a, Versions, Features>(
+        versions: Versions,
+        unstable_features: Features,
+    ) -> Self
+    where
+        Versions: Iterator<Item = &'a str>,
+        Features: Iterator<Item = (&'a str, &'a bool)>,
+    {
         Self {
-            versions: versions.iter().flat_map(|s| s.parse::<MatrixVersion>()).collect(),
+            versions: versions.flat_map(|s| s.parse::<MatrixVersion>()).collect(),
             features: unstable_features
-                .iter()
                 .filter(|(_, enabled)| **enabled)
-                .map(|(feature, _)| feature.as_str().into())
+                .map(|(feature, _)| feature.into())
                 .collect(),
         }
     }
