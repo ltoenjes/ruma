@@ -218,6 +218,7 @@ pub mod request {
         pub required_state: Vec<(StateEventType, StateKey)>,
 
         /// The maximum number of timeline events to return per room.
+        #[serde(default)]
         pub timeline_limit: UInt,
     }
 
